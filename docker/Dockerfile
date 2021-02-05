@@ -6,6 +6,7 @@ WORKDIR /var/www
 
 RUN apt-get update && apt-get install -y \
     build-essential \
+    mariadb-client \
     libpng-dev \
     libzip-dev \
     libjpeg62-turbo-dev \
@@ -22,11 +23,13 @@ RUN apt-get update && apt-get install -y \
     htop \
     openssl \
     wget \
-    curl
+    curl \
+    npm
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-install pdo pdo_pgsql zip exif pcntl
+RUN docker-php-ext-install pdo pdo_mysql mysqli zip exif pcntl
+RUN docker-php-ext-enable mysqli
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 
