@@ -14,4 +14,12 @@ class AppointmentEloquentRepository extends BaseEloquentRepository implements Ap
     {
         return Appointment::class;
     }
+
+    public function findDoctorAppointmentAvailabilityInDay($doctor_id, $date)
+    {
+        return $this->entity->select(['appointmentdate'])
+                         ->where('doctor_id', $doctor_id)
+                         ->whereDate('appointmentdate', $date)
+                         ->get();
+    }
 }

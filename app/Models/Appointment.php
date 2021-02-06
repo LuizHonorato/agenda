@@ -22,4 +22,8 @@ class Appointment extends Model
     {
         return $this->belongsTo(Patient::class);
     }
+
+    protected $dates = [
+        'appointmentdate', 'created_at', 'updated_at', 'deleted_at'
+    ];
 }
