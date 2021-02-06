@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AppointmentController;
+use App\Http\Controllers\Api\AppointmentsAvailabilityController;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\PatientController;
 use Illuminate\Support\Facades\Route;
@@ -11,3 +12,5 @@ Route::apiResources([
     'patients' => PatientController::class,
     'appointments' => AppointmentController::class
 ]);
+
+Route::get('doctor-availability-day', [AppointmentsAvailabilityController::class, 'index']);
