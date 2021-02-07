@@ -237,6 +237,7 @@
                 this.email = '';
                 this.phone = '';
                 this.profile_pic = null;
+                this.is_active = true;
                 this.update = false;
                 this.resetImage();
             },
