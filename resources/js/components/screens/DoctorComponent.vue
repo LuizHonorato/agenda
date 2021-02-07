@@ -7,26 +7,33 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Inserindo médico</h5>
+                            <h5 class="modal-title" id="staticBackdropLabel">{{ this.update ? 'Atualizando' : 'Inserindo' }} médico</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
+                            <input type="hidden" v-model="id">
                             <div class="row mb-3">
                                 <div class="col form-group" :class="{ 'form-group--error': $v.name.$error }">
                                     <input type="text" class="form-control" placeholder="Nome" aria-label="name" v-model="name">
-                                    <div class="error mt-2" v-if="!$v.name.required">Campo obrigatório</div>
-                                    <div class="error mt-2" v-if="!$v.name.minLength">Nome precisa ter no mínimo {{$v.name.$params.minLength.min}} letras.</div>
+                                    <div v-if="this.errors">
+                                        <div class="error mt-2" v-if="!$v.name.required">Campo obrigatório</div>
+                                        <div class="error mt-2" v-if="!$v.name.minLength">Nome precisa ter no mínimo {{$v.name.$params.minLength.min}} letras.</div>
+                                    </div>
                                 </div>
                                 <div class="col">
                                     <input type="email" class="form-control" placeholder="E-mail" aria-label="email" v-model="email">
-                                    <div class="error mt-2" v-if="!$v.email.required">Campo obrigatório</div>
-                                    <div class="error mt-2" v-if="!$v.email.email">Este valor não é um e-mail válido.</div>
+                                    <div v-if="this.errors">
+                                        <div class="error mt-2" v-if="!$v.email.required">Campo obrigatório</div>
+                                        <div class="error mt-2" v-if="!$v.email.email">Este valor não é um e-mail válido.</div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col">
-                                    <input type="text" class="form-control" placeholder="Telefone" aria-label="phone"  v-model="phone">
-                                    <div class="error mt-2" v-if="!$v.phone.required">Campo obrigatório</div>
+                                    <input type="text" v-mask="'(##) #####-####'" class="form-control" placeholder="Telefone" aria-label="phone"  v-model="phone">
+                                    <div v-if="this.errors">
+                                        <div class="error mt-2" v-if="!$v.phone.required">Campo obrigatório</div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group form-check mb-3">
@@ -36,7 +43,7 @@
 
                             <div class="form-group mb-3">
                                 <label for="profile_pic">Foto</label>
-                                <input type="file" class="form-control-file" ref="profile_pic" id="profile_pic" @change="onFileChange">
+                                <input type="file" class="form-control-file" ref="profile_pic" id="profile_pic" name="profile_pic" accept="image/jpeg,image/jpg,image/png" @change="onFileChange">
                             </div>
 
                             <div class="row mb-3" v-if="imagePreview !== null">
@@ -51,6 +58,27 @@
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Excluir</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Você realmente deseja excluir este médico do sistema?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-danger" @click="deleteContact(id)">Excluir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <table id="table_id" class="display">
             <thead>
@@ -59,6 +87,7 @@
                 <th>Nome</th>
                 <th>E-mail</th>
                 <th>Telefone</th>
+                <th>Ativo</th>
                 <th>Ações</th>
             </tr>
             </thead>
@@ -68,7 +97,11 @@
                 <td>{{ doctor.name }}</td>
                 <td>{{ doctor.email }}</td>
                 <td>{{ doctor.phone }}</td>
-                <td>EDIT | DEL</td>
+                <td>{{ doctor.is_active ? 'Sim' : 'Não' }}</td>
+                <td>
+                    <i class="bi bi-pencil-square mr-3 action" @click="edit(doctor.id)"></i>
+                    <i class="bi bi-trash action" @click="openModalDelete(doctor.id)"></i>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -84,12 +117,15 @@
 
         data: function() {
             return {
+                id: '',
                 name: '',
                 email: '',
                 phone: '',
                 is_active: true,
                 profile_pic: null,
-                imagePreview: null
+                imagePreview: null,
+                errors: false,
+                update: false,
             }
         },
 
@@ -112,13 +148,97 @@
         },
 
         methods: {
+            getDoctors() {
+                this.$store.dispatch('getDoctors')
+                    .then(res => {
+                        this.$store.commit('SET_DOCTORS', res.data);
+                    })
+                    .catch(err => console.log(err));
+            },
+
             submit() {
                 this.$v.$touch();
                 if (this.$v.$invalid) {
-                    console.log('ERRO');
+                    this.errors = true;
                 } else {
-                    console.log('OK');
+                    let action = this.update ? 'updateDoctor' : 'storeDoctor';
+
+                    let unmaskedPhone = this.phone.replace(/[^0-9]/g, '');
+
+                    this.$store.dispatch(action, {
+                        id: this.id,
+                        name: this.name,
+                        email: this.email,
+                        phone: unmaskedPhone,
+                        is_active: this.is_active ? 1 : 0,
+                        profile_pic: this.profile_pic
+                    })
+                    .then(() => {
+                        this.getDoctors();
+
+                        $('#staticBackdrop').modal('hide');
+                        this.reset();
+                    })
                 }
+            },
+
+            edit(id) {
+                let _this = this;
+                this.$store.dispatch('getDoctor', id)
+                    .then(res => {
+                        this.id = res.data.id;
+                        this.name = res.data.name;
+                        this.email = res.data.email;
+                        this.phone = res.data.phone;
+                        this.is_active = res.data.is_active;
+
+                        if(res.data.profile_pic && res.data.profile_pic !== 'null') {
+                            let path = [`/storage/doctors/${res.data.profile_pic}`];
+                            let blob = null;
+                            let xhr = new XMLHttpRequest();
+                            xhr.open("GET", path[0]);
+                            xhr.responseType = "blob";
+                            xhr.onload = function () {
+                                blob = xhr.response;
+                                _this.profile_pic = blob;
+                                _this.previewImage(blob);
+                            };
+                            xhr.send();
+                        }
+                        this.update = true;
+                        $('#staticBackdrop').modal('show');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+
+            openModalDelete(id) {
+                this.id = id;
+                $('#deleteModal').modal('show');
+            },
+
+            deleteContact(id) {
+                console.log(id);
+                this.$store.dispatch('deleteDoctor', id)
+                    .then(res => {
+                        $('#deleteModal').modal('hide');
+                        this.getDoctors();
+                        this.id = '';
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+
+            reset() {
+                this.id = '';
+                this.name = '';
+                this.email = '';
+                this.phone = '';
+                this.profile_pic = null;
+                this.update = false;
+                this.resetImage();
             },
 
             onFileChange(e) {
@@ -126,6 +246,7 @@
                 return;
               }
 
+              this.profile_pic = e.target.files[0];
               this.previewImage(e.target.files[0]);
             },
 
@@ -134,7 +255,6 @@
 
                 reader.onload = (e) => {
                     this.imagePreview = e.target.result;
-                    this.profile_pic = e.target.result;
                 };
                 reader.readAsDataURL(file);
             },
@@ -179,5 +299,9 @@
     .error {
         color: red;
         font-size: 12px;
+    }
+
+    .action {
+        cursor: pointer;
     }
 </style>
