@@ -104,6 +104,14 @@ class DoctorController extends Controller
                 if(!$upload) {
                     return response()->json(['error' => 'Falha ao armazenar a imagem.'], 500);
                 }
+            } else {
+                if ($doctor->profile_pic) {
+                    if(Storage::exists("doctors/{$doctor->profile_pic}")) {
+                        Storage::delete("doctors/{$doctor->profile_pic}");
+                    }
+                }
+
+                $data['profile_pic'] = null;
             }
 
             if (isset($data['is_active'])) {

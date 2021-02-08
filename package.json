@@ -25,7 +25,14 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "datatables.net": "^1.10.23",
+        "datatables.net-dt": "^1.10.23",
+        "date-fns": "^2.17.0",
+        "v-calendar": "^2.2.3",
+        "v-mask": "^2.2.4",
         "vue-router": "^3.5.1",
+        "vue-toastify": "^1.8.0",
+        "vuelidate": "^0.7.6",
         "vuex": "^3.6.2"
     }
 }

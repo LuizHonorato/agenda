@@ -96,6 +96,14 @@ class PatientController extends Controller
                 if(!$upload) {
                     return response()->json(['error' => 'Falha ao armazenar a imagem.'], 500);
                 }
+            } else {
+                if ($patient->profile_pic) {
+                    if(Storage::exists("patients/{$patient->profile_pic}")) {
+                        Storage::delete("patients/{$patient->profile_pic}");
+                    }
+                }
+
+                $data['profile_pic'] = null;
             }
 
             $patient = $this->patientsRepository->update($id, $data);

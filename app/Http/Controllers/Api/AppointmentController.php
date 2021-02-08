@@ -18,7 +18,7 @@ class AppointmentController extends Controller
 
     public function index()
     {
-        $appointments = $this->appointmentsRepository->all();
+        $appointments = $this->appointmentsRepository->relationships('doctor')->relationships('patient')->all();
 
         return response()->json($appointments);
     }

@@ -14,7 +14,7 @@ const routes = [
             {
                 path: '/agendamentos',
                 name: 'Appointment',
-                component: Appointment
+                component: Appointment,
             },
             {
                 path: '/medicos',

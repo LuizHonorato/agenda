@@ -7,6 +7,7 @@ use App\Http\Requests\StoreUpdateAppointmentAvailabilityFormRequest;
 use App\Repositories\Contracts\AppointmentRepositoryInterface;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class AppointmentsAvailabilityController extends Controller
 {
@@ -32,29 +33,35 @@ class AppointmentsAvailabilityController extends Controller
 
             for ($i = $hourStart; $i <= $hourStop; $i++) {
                 $hourStart = $hourStart < 10 ? '0' . $hourStart : $hourStart;
-                $hour = $hourStart . ':00';
+                $hour = $hourStart . ':00:00';
                 array_push($eachHourDay, $hour);
                 $hourStart += 1;
             }
 
             $availability = array();
 
-            foreach ($eachHourDay as $hour) {
-                $hourDay = Carbon::parse($data['date'] . $hour);
+            foreach ($eachHourDay as $key => $hour) {
+                $hourAvailable = $this->searchAppointmentInHour($appointments->toArray(), $hour);
 
-                $hasAppointmentInHour = array_reduce($appointments->toArray(), function ($result, $item) use($hourDay, $data) {
-                    $appointmentdate = Carbon::parse($item['appointmentdate']);
-                    $appointmentdate = $appointmentdate->modify('-3 hours');
-
-                    return $appointmentdate->toTimeString() == $hourDay->toTimeString();
-                });
-
-                array_push($availability, ['hour' => $hour, 'available' => !$hasAppointmentInHour && !$hourDay->isPast()]);
+                array_push($availability, ['hour' => $hour, 'available' => $hourAvailable]);
             }
 
             return response()->json($availability);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
+    }
+
+    function searchAppointmentInHour(array $appointments, $hour)
+    {
+        foreach ($appointments as $appointment) {
+            $appointmentdate = Carbon::parse($appointment['appointmentdate']);
+            $appointmentdate = $appointmentdate->modify('-3 hours');
+
+            if ($appointmentdate->toTimeString() == $hour) {
+                return false;
+            }
+        }
+        return true;
     }
 }
