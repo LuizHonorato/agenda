@@ -29,11 +29,18 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col form-group" :class="{ 'form-group--error': $v.name.$error }">
+                                <div class="col form-group" :class="{ 'form-group--error': $v.password.$error }">
                                     <input type="password" class="form-control" placeholder="Senha" aria-label="password" v-model="password">
                                     <div v-if="this.errors">
                                         <div class="error mt-2" v-if="!$v.password.required">Campo obrigatório</div>
                                         <div class="error mt-2" v-if="!$v.password.minLength">Senha precisa ter no mínimo {{$v.password.$params.minLength.min}} caracteres.</div>
+                                    </div>
+                                </div>
+                                <div class="col form-group" :class="{ 'form-group--error': $v.confirmation_password.$error }">
+                                    <input type="password" class="form-control" placeholder="Confirmação de senha" aria-label="password" v-model="confirmation_password">
+                                    <div v-if="this.errors">
+                                        <div class="error mt-2" v-if="!$v.confirmation_password.required">Campo obrigatório</div>
+                                        <div class="error mt-2" v-if="!$v.confirmation_password.sameAsPassword">As senhas não coincidem</div>
                                     </div>
                                 </div>
                             </div>
@@ -92,7 +99,7 @@
 </template>
 
 <script>
-import {email, minLength, required} from "vuelidate/lib/validators";
+import {email, minLength, required, sameAs} from "vuelidate/lib/validators";
 import {mapState} from "vuex";
 
 export default {
@@ -104,6 +111,7 @@ export default {
             name: '',
             email: '',
             password: '',
+            confirmation_password: '',
             errors: false,
             update: false,
         }
@@ -122,6 +130,11 @@ export default {
         password: {
             required,
             minLength: minLength(6)
+        },
+
+        confirmation_password: {
+            required,
+            sameAsPassword: sameAs('password')
         }
     },
 
@@ -186,7 +199,7 @@ export default {
             this.$store.dispatch('deleteUser', id)
                 .then(res => {
                     $('#deleteModal').modal('hide');
-                    this.getPatients();
+                    this.getUsers();
                     this.id = '';
                 })
                 .catch(err => {
@@ -199,6 +212,7 @@ export default {
             this.name = '';
             this.email = '';
             this.password = '';
+            this.confirmation_password = '';
         },
     },
 

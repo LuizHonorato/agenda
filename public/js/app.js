@@ -1991,14 +1991,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! date-fns */ "./node_modules/date-fns/esm/format/index.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2137,8 +2150,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       format: date_fns__WEBPACK_IMPORTED_MODULE_0__.default
     };
   },
-  validations: {},
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapState)(['appointments', 'doctors', 'patients'])),
+  validations: {
+    selectedDoctor: {
+      id: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__.required
+      }
+    },
+    selectedPatient: {
+      id: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__.required
+      }
+    },
+    selectedHour: {
+      hour: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__.required
+      }
+    },
+    date: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__.required
+    }
+  },
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapState)(['appointments', 'doctors', 'patients'])),
   watch: {
     selectedDoctor: function selectedDoctor() {
       if (this.selectedDoctor && this.selectedDoctor.id !== null) {
@@ -2993,6 +3025,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -3003,6 +3042,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       name: '',
       email: '',
       password: '',
+      confirmation_password: '',
       errors: false,
       update: false
     };
@@ -3019,6 +3059,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     password: {
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__.required,
       minLength: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__.minLength)(6)
+    },
+    confirmation_password: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__.required,
+      sameAsPassword: (0,vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__.sameAs)('password')
     }
   },
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapState)(['users'])),
@@ -3081,7 +3125,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$store.dispatch('deleteUser', id).then(function (res) {
         $('#deleteModal').modal('hide');
 
-        _this5.getPatients();
+        _this5.getUsers();
 
         _this5.id = '';
       })["catch"](function (err) {
@@ -3093,6 +3137,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.name = '';
       this.email = '';
       this.password = '';
+      this.confirmation_password = '';
     }
   },
   created: function created() {
@@ -44265,7 +44310,17 @@ var render = function() {
                         )
                       }),
                       0
-                    )
+                    ),
+                    _vm._v(" "),
+                    this.errors
+                      ? _c("div", [
+                          !_vm.$v.selectedPatient.id.required
+                            ? _c("div", { staticClass: "error mt-2" }, [
+                                _vm._v("Campo obrigatório")
+                              ])
+                            : _vm._e()
+                        ])
+                      : _vm._e()
                   ])
                 ]),
                 _vm._v(" "),
@@ -44321,7 +44376,17 @@ var render = function() {
                         )
                       }),
                       0
-                    )
+                    ),
+                    _vm._v(" "),
+                    this.errors
+                      ? _c("div", [
+                          !_vm.$v.selectedDoctor.id.required
+                            ? _c("div", { staticClass: "error mt-2" }, [
+                                _vm._v("Campo obrigatório")
+                              ])
+                            : _vm._e()
+                        ])
+                      : _vm._e()
                   ])
                 ]),
                 _vm._v(" "),
@@ -44423,10 +44488,30 @@ var render = function() {
                               )
                             }),
                             0
-                          )
+                          ),
+                          _vm._v(" "),
+                          this.errors
+                            ? _c("div", [
+                                !_vm.$v.selectedHour.hour.required
+                                  ? _c("div", { staticClass: "error mt-2" }, [
+                                      _vm._v("Campo obrigatório")
+                                    ])
+                                  : _vm._e()
+                              ])
+                            : _vm._e()
                         ],
                         1
-                      )
+                      ),
+                      _vm._v(" "),
+                      this.errors
+                        ? _c("div", [
+                            !_vm.$v.date.required
+                              ? _c("div", { staticClass: "error mt-2" }, [
+                                  _vm._v("Campo obrigatório")
+                                ])
+                              : _vm._e()
+                          ])
+                        : _vm._e()
                     ])
                   : _vm._e()
               ]),
@@ -45771,7 +45856,7 @@ var render = function() {
                     "div",
                     {
                       staticClass: "col form-group",
-                      class: { "form-group--error": _vm.$v.name.$error }
+                      class: { "form-group--error": _vm.$v.password.$error }
                     },
                     [
                       _c("input", {
@@ -45817,6 +45902,59 @@ var render = function() {
                                       ) +
                                       " caracteres."
                                   )
+                                ])
+                              : _vm._e()
+                          ])
+                        : _vm._e()
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "col form-group",
+                      class: {
+                        "form-group--error": _vm.$v.confirmation_password.$error
+                      }
+                    },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.confirmation_password,
+                            expression: "confirmation_password"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: {
+                          type: "password",
+                          placeholder: "Confirmação de senha",
+                          "aria-label": "password"
+                        },
+                        domProps: { value: _vm.confirmation_password },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.confirmation_password = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      this.errors
+                        ? _c("div", [
+                            !_vm.$v.confirmation_password.required
+                              ? _c("div", { staticClass: "error mt-2" }, [
+                                  _vm._v("Campo obrigatório")
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            !_vm.$v.confirmation_password.sameAsPassword
+                              ? _c("div", { staticClass: "error mt-2" }, [
+                                  _vm._v("As senhas não coincidem")
                                 ])
                               : _vm._e()
                           ])

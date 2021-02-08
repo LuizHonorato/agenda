@@ -21,6 +21,9 @@
                                             {{ patient.name }}
                                         </option>
                                     </select>
+                                    <div v-if="this.errors">
+                                        <div class="error mt-2" v-if="!$v.selectedPatient.id.required">Campo obrigatório</div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -32,6 +35,9 @@
                                             {{ doctor.name }}
                                         </option>
                                     </select>
+                                    <div v-if="this.errors">
+                                        <div class="error mt-2" v-if="!$v.selectedDoctor.id.required">Campo obrigatório</div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -52,6 +58,12 @@
                                             {{ availability.hour }}
                                         </option>
                                     </select>
+                                    <div v-if="this.errors">
+                                        <div class="error mt-2" v-if="!$v.selectedHour.hour.required">Campo obrigatório</div>
+                                    </div>
+                                </div>
+                                <div v-if="this.errors">
+                                    <div class="error mt-2" v-if="!$v.date.required">Campo obrigatório</div>
                                 </div>
                             </div>
                         </div>
@@ -141,7 +153,24 @@ export default {
     },
 
     validations: {
-
+        selectedDoctor: {
+            id: {
+                required
+            }
+        },
+        selectedPatient: {
+            id: {
+                required
+            }
+        },
+        selectedHour: {
+            hour: {
+                required
+            }
+        },
+        date: {
+            required
+        }
     },
 
     computed: {
