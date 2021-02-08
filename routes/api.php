@@ -1,19 +1,18 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\AppointmentController;
+use App\Http\Controllers\Api\AppointmentsAvailabilityController;
+use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\PatientController;
+use App\Http\Controllers\Api\UsersController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::apiResources([
+    'doctors' => DoctorController::class,
+    'patients' => PatientController::class,
+    'appointments' => AppointmentController::class,
+    'users' => UsersController::class
+]);
+
+Route::get('doctor-availability-day', [AppointmentsAvailabilityController::class, 'index']);
