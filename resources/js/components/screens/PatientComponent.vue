@@ -147,7 +147,9 @@
                     .then(res => {
                         this.$store.commit('SET_PATIENTS', res.data);
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => {
+                        this.$vToastify.error('Erro ao carregar os pacientes. Verifique e tente novamente');
+                    });
             },
 
             submit() {
@@ -165,13 +167,14 @@
                         email: this.email,
                         phone: unmaskedPhone,
                         profile_pic: this.profile_pic
-                    })
-                        .then(() => {
+                    }).then(() => {
                             this.getPatients();
 
                             $('#staticBackdrop').modal('hide');
                             this.reset();
-                        })
+                        }).catch(err => {
+                            this.$vToastify.error('Erro ao salvar o paciente. Verifique e tente novamente');
+                    })
                 }
             },
 
@@ -201,7 +204,7 @@
                         $('#staticBackdrop').modal('show');
                     })
                     .catch(err => {
-                        console.log(err);
+                        this.$vToastify.error('Erro ao buscar o paciente. Verifique e tente novamente');
                     });
             },
 
@@ -218,7 +221,7 @@
                         this.id = '';
                     })
                     .catch(err => {
-                        console.log(err);
+                        this.$vToastify.error('Erro ao excluir o paciente. Verifique e tente novamente');
                     });
             },
 
@@ -269,7 +272,9 @@
                         }
                     });
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    this.$vToastify.error('Erro ao carregar os pacientes. Verifique e tente novamente');
+                });
         }
     }
 </script>

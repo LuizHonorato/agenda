@@ -73,7 +73,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-danger" @click="deleteAppointment(id)">Excluir</button>
+                            <button type="button" class="btn btn-danger" @click="deleteDoctor(id)">Excluir</button>
                         </div>
                     </div>
                 </div>
@@ -153,7 +153,9 @@
                     .then(res => {
                         this.$store.commit('SET_DOCTORS', res.data);
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => {
+                        this.$vToastify.error('Erro ao carregar os médicos. Verifique e tente novamente');
+                    });
             },
 
             submit() {
@@ -178,6 +180,8 @@
 
                         $('#staticBackdrop').modal('hide');
                         this.reset();
+                    }).catch(err => {
+                        this.$vToastify.error('Erro ao salvar o médico. Verifique e tente novamente');
                     })
                 }
             },
@@ -209,7 +213,7 @@
                         $('#staticBackdrop').modal('show');
                     })
                     .catch(err => {
-                        console.log(err);
+                        this.$vToastify.error('Erro ao buscar o médico. Verifique e tente novamente');
                     });
             },
 
@@ -218,7 +222,7 @@
                 $('#deleteModal').modal('show');
             },
 
-            deleteAppointment(id) {
+            deleteDoctor(id) {
                 console.log(id);
                 this.$store.dispatch('deleteDoctor', id)
                     .then(res => {
@@ -227,7 +231,7 @@
                         this.id = '';
                     })
                     .catch(err => {
-                        console.log(err);
+                        this.$vToastify.error('Erro ao excluir o médico. Verifique e tente novamente');
                     });
             },
 
@@ -279,7 +283,9 @@
                             }
                         });
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => {
+                        this.$vToastify.error('Erro ao carregar os médicos. Verifique e tente novamente');
+                    });
         }
     }
 </script>

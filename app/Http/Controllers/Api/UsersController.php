@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUpdateUserFormRequest;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
@@ -27,6 +28,8 @@ class UsersController extends Controller
     {
         try {
             $data = $request->all();
+
+            $data['password'] = Hash::make($data['password']);
 
             $user = $this->usersRepository->store($data);
 

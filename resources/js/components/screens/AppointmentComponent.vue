@@ -191,7 +191,9 @@ export default {
                 .then(res => {
                     this.$store.commit('SET_APPOINTMENTS', res.data);
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    this.$vToastify.error('Erro ao carregar os agendamentos. Verifique e tente novamente');
+                });
         },
 
         getDoctors() {
@@ -199,7 +201,9 @@ export default {
                 .then(res => {
                     this.$store.commit('SET_DOCTORS', res.data);
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    this.$vToastify.error('Erro ao carregar os médicos. Verifique e tente novamente');
+                });
         },
 
         getPatients() {
@@ -207,7 +211,9 @@ export default {
                 .then(res => {
                     this.$store.commit('SET_PATIENTS', res.data);
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    this.$vToastify.error('Erro ao carregar os pacientes. Verifique e tente novamente');
+                });
         },
 
         onDateChangeHandler() {
@@ -244,6 +250,8 @@ export default {
 
                         $('#staticBackdrop').modal('hide');
                         this.reset();
+                    }).catch(err => {
+                        this.$vToastify.error('Erro ao salvar o agendamento. Verifique e tente novamente');
                     })
             }
         },
@@ -265,7 +273,7 @@ export default {
                     $('#staticBackdrop').modal('show');
                 })
                 .catch(err => {
-                    console.log(err);
+                    this.$vToastify.error('Erro ao buscar o agendamento. Verifique e tente novamente');
                 });
         },
 
@@ -282,7 +290,7 @@ export default {
                     this.id = '';
                 })
                 .catch(err => {
-                    console.log(err);
+                    this.$vToastify.error('Erro ao excluir o agendamento. Verifique e tente novamente');
                 });
         },
 

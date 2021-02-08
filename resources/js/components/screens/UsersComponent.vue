@@ -148,7 +148,9 @@ export default {
                 .then(res => {
                     this.$store.commit('SET_USERS', res.data);
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    this.$vToastify.error('Erro ao carregar os usuarios. Verifique e tente novamente');
+                });
         },
 
         submit() {
@@ -170,6 +172,9 @@ export default {
                         $('#staticBackdrop').modal('hide');
                         this.reset();
                     })
+                    .catch(err => {
+                        this.$vToastify.error('Erro ao salvar o usuário. Verifique e tente novamente');
+                    })
             }
         },
 
@@ -180,13 +185,12 @@ export default {
                     this.id = res.data.id;
                     this.name = res.data.name;
                     this.email = res.data.email;
-                    this.password = res.data.password;
 
                     this.update = true;
                     $('#staticBackdrop').modal('show');
                 })
                 .catch(err => {
-                    console.log(err);
+                    this.$vToastify.error('Erro ao buscar o usuario. Verifique e tente novamente');
                 });
         },
 
@@ -203,7 +207,7 @@ export default {
                     this.id = '';
                 })
                 .catch(err => {
-                    console.log(err);
+                    this.$vToastify.error('Erro ao excluir o usuário. Verifique e tente novamente');
                 });
         },
 
@@ -213,6 +217,8 @@ export default {
             this.email = '';
             this.password = '';
             this.confirmation_password = '';
+            this.errors = false;
+            this.update = false;
         },
     },
 
@@ -228,7 +234,9 @@ export default {
                     }
                 });
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                this.$vToastify.error('Erro ao carregar os usuarios. Verifique e tente novamente');
+            });
     }
 }
 </script>
