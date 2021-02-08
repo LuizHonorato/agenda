@@ -69,7 +69,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-danger" @click="deleteAppointment(id)">Excluir</button>
+                            <button type="button" class="btn btn-danger" @click="deletePatient(id)">Excluir</button>
                         </div>
                     </div>
                 </div>
@@ -210,8 +210,7 @@
                 $('#deleteModal').modal('show');
             },
 
-            deleteAppointment(id) {
-                console.log(id);
+            deletePatient(id) {
                 this.$store.dispatch('deletePatient', id)
                     .then(res => {
                         $('#deleteModal').modal('hide');

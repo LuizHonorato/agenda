@@ -301,12 +301,6 @@ export default {
         font-weight: bold;
     }
 
-    .imagePreview {
-        width: 200px;
-        height: 170px;
-        border-radius: 50%;
-    }
-
     .error {
         color: red;
         font-size: 12px;
