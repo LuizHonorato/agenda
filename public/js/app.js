@@ -3210,6 +3210,7 @@ var app = new Vue({
   router: _router__WEBPACK_IMPORTED_MODULE_0__.default,
   store: _store__WEBPACK_IMPORTED_MODULE_1__.default
 });
+_router__WEBPACK_IMPORTED_MODULE_0__.default.replace('/agendamentos');
 
 /***/ }),
 
@@ -3304,7 +3305,8 @@ var routes = [{
   }]
 }];
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_6__.default({
-  routes: routes
+  routes: routes,
+  mode: "history"
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (router);
 

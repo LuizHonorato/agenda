@@ -26,3 +26,5 @@ const app = new Vue({
     router,
     store
 });
+
+router.replace('/agendamentos');
