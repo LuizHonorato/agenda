@@ -35,7 +35,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-2" v-if="selectedDoctor !== null">
+                            <div class="row mb-2" v-if="this.selectedDoctor && this.selectedDoctor.id !== null">
                                 <label>Data e hora</label>
                                 <div class="col d-flex form-group">
                                     <vc-date-picker :min-date="new Date()" v-model="date" @dayclick="onDateChangeHandler">
@@ -48,7 +48,6 @@
                                         </template>
                                     </vc-date-picker>
                                     <select v-model="selectedHour" class="form-control ml-3">
-                                        <option selected>Escolha um horário</option>
                                         <option v-for="availability in this.doctorAvailability" :key="availability.hour" :disabled="!availability.available"  v-bind:value="{hour: availability.hour}">
                                             {{ availability.hour }}
                                         </option>
@@ -124,9 +123,15 @@ export default {
     data: function() {
         return {
             id: '',
-            selectedDoctor: null,
-            selectedPatient: null,
-            selectedHour: null,
+            selectedDoctor: {
+                id: null
+            },
+            selectedPatient: {
+                id: null
+            },
+            selectedHour: {
+                hour: null
+            },
             doctorAvailability: [],
             date: new Date(),
             errors: false,
@@ -145,7 +150,9 @@ export default {
 
     watch: {
         selectedDoctor () {
-            this.onDateChangeHandler();
+            if (this.selectedDoctor && this.selectedDoctor.id !== null) {
+                this.onDateChangeHandler();
+            }
         }
     },
 
@@ -214,13 +221,16 @@ export default {
 
         edit(id) {
             let _this = this;
-            this.$store.dispatch('getDoctor', id)
+            this.$store.dispatch('getAppointment', id)
                 .then(res => {
+                    console.log(res);
                     this.id = res.data.id;
-                    this.name = res.data.name;
-                    this.email = res.data.email;
-                    this.phone = res.data.phone;
-                    this.is_active = res.data.is_active;
+                    this.selectedDoctor.id = res.data.doctor_id;
+                    this.selectedPatient.id = res.data.patient_id;
+                    this.date = res.data.appointmentdate;
+                    this.selectedHour.hour = format(new Date(res.data.appointmentdate), 'HH:mm');
+
+                    this.onDateChangeHandler();
 
                     this.update = true;
                     $('#staticBackdrop').modal('show');
@@ -236,8 +246,7 @@ export default {
         },
 
         deleteAppointment(id) {
-            console.log(id);
-            this.$store.dispatch('deleteDoctor', id)
+            this.$store.dispatch('deleteAppointment', id)
                 .then(res => {
                     $('#deleteModal').modal('hide');
                     this.getAppointments();
@@ -250,9 +259,15 @@ export default {
 
         reset() {
             this.id = '';
-            this.selectedDoctor = null;
-            this.selectedPatient = null;
-            this.selectedHour = null;
+            this.selectedDoctor = {
+                id: null
+            };
+            this.selectedPatient = {
+                id: null
+            };
+            this.selectedHour = {
+                hour: null
+            };
             this.doctorAvailability = [];
             this.date = new Date();
         },

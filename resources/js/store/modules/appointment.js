@@ -39,7 +39,7 @@ const actions = {
 
     updateAppointment({dispatch}, appointment) {
         return new Promise((resolve, reject) => {
-            axios.post(`/appointments/${doctor.id}`, {
+            axios.put(`/appointments/${appointment.id}`, {
                 doctor_id: appointment.doctor_id,
                 patient_id: appointment.patient_id,
                 appointmentdate: appointment.appointmentdate

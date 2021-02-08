@@ -2113,7 +2113,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 
 
@@ -2122,9 +2121,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       id: '',
-      selectedDoctor: null,
-      selectedPatient: null,
-      selectedHour: null,
+      selectedDoctor: {
+        id: null
+      },
+      selectedPatient: {
+        id: null
+      },
+      selectedHour: {
+        hour: null
+      },
       doctorAvailability: [],
       date: new Date(),
       errors: false,
@@ -2136,7 +2141,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapState)(['appointments', 'doctors', 'patients'])),
   watch: {
     selectedDoctor: function selectedDoctor() {
-      this.onDateChangeHandler();
+      if (this.selectedDoctor && this.selectedDoctor.id !== null) {
+        this.onDateChangeHandler();
+      }
     }
   },
   methods: {
@@ -2210,12 +2217,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var _this = this;
 
-      this.$store.dispatch('getDoctor', id).then(function (res) {
+      this.$store.dispatch('getAppointment', id).then(function (res) {
+        console.log(res);
         _this7.id = res.data.id;
-        _this7.name = res.data.name;
-        _this7.email = res.data.email;
-        _this7.phone = res.data.phone;
-        _this7.is_active = res.data.is_active;
+        _this7.selectedDoctor.id = res.data.doctor_id;
+        _this7.selectedPatient.id = res.data.patient_id;
+        _this7.date = res.data.appointmentdate;
+        _this7.selectedHour.hour = (0,date_fns__WEBPACK_IMPORTED_MODULE_0__.default)(new Date(res.data.appointmentdate), 'HH:mm');
+
+        _this7.onDateChangeHandler();
+
         _this7.update = true;
         $('#staticBackdrop').modal('show');
       })["catch"](function (err) {
@@ -2229,8 +2240,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     deleteAppointment: function deleteAppointment(id) {
       var _this8 = this;
 
-      console.log(id);
-      this.$store.dispatch('deleteDoctor', id).then(function (res) {
+      this.$store.dispatch('deleteAppointment', id).then(function (res) {
         $('#deleteModal').modal('hide');
 
         _this8.getAppointments();
@@ -2242,9 +2252,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     reset: function reset() {
       this.id = '';
-      this.selectedDoctor = null;
-      this.selectedPatient = null;
-      this.selectedHour = null;
+      this.selectedDoctor = {
+        id: null
+      };
+      this.selectedPatient = {
+        id: null
+      };
+      this.selectedHour = {
+        hour: null
+      };
       this.doctorAvailability = [];
       this.date = new Date();
     }
@@ -3114,7 +3130,7 @@ var actions = {
   updateAppointment: function updateAppointment(_ref4, appointment) {
     var dispatch = _ref4.dispatch;
     return new Promise(function (resolve, reject) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post("/appointments/".concat(doctor.id), {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().put("/appointments/".concat(appointment.id), {
         doctor_id: appointment.doctor_id,
         patient_id: appointment.patient_id,
         appointmentdate: appointment.appointmentdate
@@ -43935,7 +43951,7 @@ var render = function() {
                   ])
                 ]),
                 _vm._v(" "),
-                _vm.selectedDoctor !== null
+                this.selectedDoctor && this.selectedDoctor.id !== null
                   ? _c("div", { staticClass: "row mb-2" }, [
                       _c("label", [_vm._v("Data e hora")]),
                       _vm._v(" "),
@@ -44011,36 +44027,28 @@ var render = function() {
                                 }
                               }
                             },
-                            [
-                              _c("option", { attrs: { selected: "" } }, [
-                                _vm._v("Escolha um horário")
-                              ]),
-                              _vm._v(" "),
-                              _vm._l(this.doctorAvailability, function(
-                                availability
-                              ) {
-                                return _c(
-                                  "option",
-                                  {
-                                    key: availability.hour,
-                                    attrs: {
-                                      disabled: !availability.available
-                                    },
-                                    domProps: {
-                                      value: { hour: availability.hour }
-                                    }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                        " +
-                                        _vm._s(availability.hour) +
-                                        "\n                                    "
-                                    )
-                                  ]
-                                )
-                              })
-                            ],
-                            2
+                            _vm._l(this.doctorAvailability, function(
+                              availability
+                            ) {
+                              return _c(
+                                "option",
+                                {
+                                  key: availability.hour,
+                                  attrs: { disabled: !availability.available },
+                                  domProps: {
+                                    value: { hour: availability.hour }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                        " +
+                                      _vm._s(availability.hour) +
+                                      "\n                                    "
+                                  )
+                                ]
+                              )
+                            }),
+                            0
                           )
                         ],
                         1
