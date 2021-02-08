@@ -25,6 +25,20 @@ const actions = {
         });
     },
 
+    getDoctorAvailability({}, data) {
+        return new Promise((resolve, reject) => {
+            axios
+                .get('/doctor-availability-day', {
+                    params: {
+                        doctor_id: data.doctor_id,
+                        date: data.date
+                    }
+                })
+                .then(res => resolve(res))
+                .catch(err => reject(err));
+        });
+    },
+
     storeDoctor({dispatch}, doctor) {
         const config = {
             headers: {
